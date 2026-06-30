@@ -48,24 +48,13 @@ module.exports = {
         // Buttons
         if (interaction.isButton()) {
 
-            // Help Ticket
-            if (interaction.customId === "help") {
-                return await createTicket(interaction, "help");
-            }
+            /// Help Ticket
+if (interaction.customId === "help") {
+    return await createTicket(interaction, "help");
+}
 
-            // Rules Button
-            if (interaction.customId === "rules") {
-
-                return interaction.reply({
-                    content: "📖 Robbery Rules: <#1521548373902233800>",
-                    ephemeral: true
-                });
-
-            }
-
-            // Claim / Close / Delete
-            return await handleButtons(interaction);
-
+// باقي الأزرار
+return await handleButtons(interaction);
         }
 
     }

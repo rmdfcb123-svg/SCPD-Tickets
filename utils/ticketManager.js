@@ -7,11 +7,19 @@ const {
     EmbedBuilder
 } = require("discord.js");
 
-const robberyInfo = require("./robberyData");
+const robberyData = require("./robberyData");
 const config = require("../config/config");
 
 module.exports = async (interaction, robbery) => {
-       const info = robberyInfo[robbery];
+
+    const info = robberyData[robbery];
+
+    if (!info) {
+        return interaction.reply({
+            content: "❌ Invalid ticket type.",
+            ephemeral: true
+        });
+    }
 
     const member = interaction.member;
 
@@ -96,10 +104,38 @@ module.exports = async (interaction, robbery) => {
 
 );
 
-const embed = new EmbedBuilder()
-    .setColor(info.color)
-    .setTitle(info.title)
-    .setDescription(
+let embed;
+
+if (robbery === "help") {
+
+    embed = new EmbedBuilder()
+        .setColor(info.color)
+        .setTitle(info.title)
+        .setDescription(
+`Welcome ${interaction.user}
+
+━━━━━━━━━━━━━━━━━━
+
+📌 **Subject:**
+
+📝 Please describe your issue clearly.
+
+━━━━━━━━━━━━━━━━━━
+
+👮 A member of the High Grade team will assist you shortly.`
+        )
+        .setImage(info.image)
+        .setFooter({
+            text: config.BOT_NAME
+        })
+        .setTimestamp();
+
+} else {
+
+    embed = new EmbedBuilder()
+        .setColor(info.color)
+        .setTitle(info.title)
+        .setDescription(
 `Welcome ${interaction.user}
 
 Please complete the following information before waiting for High Grade approval.
@@ -119,12 +155,14 @@ Please complete the following information before waiting for High Grade approval
 ━━━━━━━━━━━━━━━━━━
 
 ⚠️ **Do NOT start the robbery before High Grade approval.**`
-    )
-    .setImage(info.image)
-    .setFooter({
-        text: config.BOT_NAME
-    })
-    .setTimestamp();
+        )
+        .setImage(info.image)
+        .setFooter({
+            text: config.BOT_NAME
+        })
+        .setTimestamp();
+
+}
 
 await ticket.send({
     embeds: [embed],
