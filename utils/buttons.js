@@ -6,6 +6,7 @@ const {
     EmbedBuilder
 } = require("discord.js");
 
+const logManager = require("./logManager");
 module.exports = async (interaction) => {
 
     // =========================
@@ -84,18 +85,19 @@ module.exports = async (interaction) => {
     }
 
     // =========================
-    // DELETE
-    // =========================
-    if (interaction.customId === "delete_ticket") {
+// DELETE
+// =========================
+if (interaction.customId === "delete_ticket") {
 
-        await interaction.reply({
-            content: "🗑️ Ticket will be deleted in **5 seconds**..."
-        });
+    await interaction.reply({
+        content: "🗑️ Creating transcript...\n⏳ Ticket will be deleted in **5 seconds**."
+    });
 
-        setTimeout(() => {
-            interaction.channel.delete().catch(() => {});
-        }, 5000);
+    await logManager(interaction.channel, interaction.user);
 
-    }
+    setTimeout(() => {
+        interaction.channel.delete().catch(console.error);
+    }, 5000);
 
-};
+    return;
+}
