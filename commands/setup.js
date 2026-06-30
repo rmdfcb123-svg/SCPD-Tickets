@@ -82,9 +82,9 @@ Choose the robbery from the menu below.
 );
 
         await interaction.channel.send({
-            embeds: [embed],
-            components: [menuRow, buttonRow]
-        });
+    embeds: [embed],
+    components: [menuRow, buttons]
+});
 
         await interaction.reply({
             content: "✅ Major Robberies panel created successfully.",
