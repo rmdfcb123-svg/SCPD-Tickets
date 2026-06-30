@@ -23,13 +23,16 @@ module.exports = async (interaction, robbery) => {
 
     const member = interaction.member;
 
-    // يسمح فقط لرتبة المجرمين
-    if (!member.roles.cache.has(config.CRIMINAL_ROLE)) {
-        return interaction.reply({
-            content: "❌ You don't have permission to open this ticket.",
-            ephemeral: true
-        });
-    }
+// اسمح للجميع بفتح Help
+if (
+    robbery !== "help" &&
+    !member.roles.cache.has(config.CRIMINAL_ROLE)
+) {
+    return interaction.reply({
+        content: "❌ You don't have permission to open this ticket.",
+        ephemeral: true
+    });
+}
 
     // منع فتح أكثر من تذكرة
     const exists = interaction.guild.channels.cache.find(c =>
