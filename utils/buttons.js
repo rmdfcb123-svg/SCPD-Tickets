@@ -1,111 +1,101 @@
 const {
-    ChannelType,
     PermissionFlagsBits,
-    EmbedBuilder,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle,
+    EmbedBuilder
 } = require("discord.js");
-
-const config = require("../config/config");
 
 module.exports = async (interaction) => {
 
-    if (!interaction.isButton()) return;
-
     // =========================
-    // HELP BUTTON
-    // =========================
-    if (interaction.customId === "help") {
-
-        const exists = interaction.guild.channels.cache.find(
-            c => c.topic === interaction.user.id && c.name.startsWith("help")
-        );
-
-        if (exists) {
-            return interaction.reply({
-                content: `❌ You already have a support ticket: ${exists}`,
-                ephemeral: true
-            });
-        }
-
-        const channel = await interaction.guild.channels.create({
-            name: `help-${interaction.user.username}`,
-            type: ChannelType.GuildText,
-            parent: config.CATEGORY_ID,
-            topic: interaction.user.id,
-
-            permissionOverwrites: [
-                {
-                    id: interaction.guild.roles.everyone,
-                    deny: [PermissionFlagsBits.ViewChannel]
-                },
-                {
-                    id: interaction.user.id,
-                    allow: [
-                        PermissionFlagsBits.ViewChannel,
-                        PermissionFlagsBits.SendMessages,
-                        PermissionFlagsBits.ReadMessageHistory
-                    ]
-                },
-                ...config.POLICE_ROLES.map(role => ({
-                    id: role,
-                    allow: [
-                        PermissionFlagsBits.ViewChannel,
-                        PermissionFlagsBits.SendMessages,
-                        PermissionFlagsBits.ReadMessageHistory
-                    ]
-                }))
-            ]
-        });
-
-        const embed = new EmbedBuilder()
-            .setColor("#3B82F6")
-            .setTitle("🛟 Police Support")
-            .setDescription(
-`Welcome ${interaction.user}
-
-━━━━━━━━━━━━━━━━━━
-
-📌 **Subject:**
-📝 Please describe your issue clearly.
-
-━━━━━━━━━━━━━━━━━━
-
-👮 A staff member will assist you soon.`
-            )
-            .setFooter({
-                text: config.BOT_NAME
-            })
-            .setTimestamp();
-
-        const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setCustomId("close_ticket")
-                .setLabel("Close")
-                .setEmoji("🔒")
-                .setStyle(ButtonStyle.Secondary)
-        );
-
-        await channel.send({
-            embeds: [embed],
-            components: [row]
-        });
-
-        return interaction.reply({
-            content: `✅ Support ticket created: ${channel}`,
-            ephemeral: true
-        });
-    }
-
-    // =========================
-    // RULES BUTTON
+    // RULES
     // =========================
     if (interaction.customId === "rules") {
 
         return interaction.reply({
-            content: "📖 Please check the rules channel: <#1521548373902233800>",
+            content: "📖 Please check the robbery rules: <#1521548373902233800>",
             ephemeral: true
         });
+
     }
+
+    // =========================
+    // CLAIM
+    // =========================
+    if (interaction.customId === "claim_ticket") {
+
+        const claimedEmbed = new EmbedBuilder()
+            .setColor("#57F287")
+            .setDescription(`✅ This ticket has been claimed by ${interaction.user}.`)
+            .setTimestamp();
+
+        const row = new ActionRowBuilder().addComponents(
+
+            new ButtonBuilder()
+                .setCustomId("claimed")
+                .setLabel(`Claimed by ${interaction.user.username}`)
+                .setEmoji("✅")
+                .setStyle(ButtonStyle.Success)
+                .setDisabled(true),
+
+            new ButtonBuilder()
+                .setCustomId("close_ticket")
+                .setLabel("Close")
+                .setEmoji("🔒")
+                .setStyle(ButtonStyle.Secondary),
+
+            new ButtonBuilder()
+                .setCustomId("delete_ticket")
+                .setLabel("Delete")
+                .setEmoji("🗑️")
+                .setStyle(ButtonStyle.Danger)
+
+        );
+
+        await interaction.update({
+            components: [row]
+        });
+
+        return interaction.followUp({
+            embeds: [claimedEmbed]
+        });
+
+    }
+
+    // =========================
+    // CLOSE
+    // =========================
+    if (interaction.customId === "close_ticket") {
+
+        await interaction.channel.permissionOverwrites.edit(interaction.channel.topic, {
+            SendMessages: false
+        });
+
+        const embed = new EmbedBuilder()
+            .setColor("#FEE75C")
+            .setDescription(`🔒 Ticket closed by ${interaction.user}.`)
+            .setTimestamp();
+
+        return interaction.reply({
+            embeds: [embed]
+        });
+
+    }
+
+    // =========================
+    // DELETE
+    // =========================
+    if (interaction.customId === "delete_ticket") {
+
+        await interaction.reply({
+            content: "🗑️ Ticket will be deleted in **5 seconds**..."
+        });
+
+        setTimeout(() => {
+            interaction.channel.delete().catch(() => {});
+        }, 5000);
+
+    }
+
 };
