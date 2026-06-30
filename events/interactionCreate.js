@@ -1,13 +1,13 @@
 const { Events } = require("discord.js");
 const createTicket = require("../utils/ticketManager");
 const handleButtons = require("../utils/buttons");
-const config = require("../config/config");
 
 module.exports = {
     name: Events.InteractionCreate,
 
     async execute(interaction) {
 
+        // Slash Commands
         if (interaction.isChatInputCommand()) {
 
             const command = interaction.client.commands.get(interaction.commandName);
@@ -35,6 +35,7 @@ module.exports = {
             return;
         }
 
+        // Select Menu
         if (interaction.isStringSelectMenu()) {
 
             if (interaction.customId !== "major_robberies") return;
@@ -44,11 +45,26 @@ module.exports = {
             return;
         }
 
+        // Buttons
         if (interaction.isButton()) {
 
-        if (interaction.isButton()) {
-    return await handleButtons(interaction);
-}    // سنضيف Claim / Close / Delete هنا في الخطوة القادمة
+            // Help Ticket
+            if (interaction.customId === "help") {
+                return await createTicket(interaction, "help");
+            }
+
+            // Rules Button
+            if (interaction.customId === "rules") {
+
+                return interaction.reply({
+                    content: "📖 Robbery Rules: <#1521548373902233800>",
+                    ephemeral: true
+                });
+
+            }
+
+            // Claim / Close / Delete
+            return await handleButtons(interaction);
 
         }
 

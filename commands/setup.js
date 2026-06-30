@@ -3,7 +3,9 @@ const {
     PermissionFlagsBits,
     EmbedBuilder,
     ActionRowBuilder,
-    StringSelectMenuBuilder
+    StringSelectMenuBuilder,
+    ButtonBuilder,
+    ButtonStyle
 } = require("discord.js");
 
 module.exports = {
@@ -24,49 +26,62 @@ Choose the robbery from the menu below.
 
 ⚠️ Wait for High Grade approval before starting the robbery.`
             )
+            .setImage("https://cdn.discordapp.com/attachments/1521162083968749710/1521543853579178014/ChatGPT_Image_30_juin_2026_16_51_24.png?ex=6a4537a3&is=6a43e623&hm=ef60e58f204396657634b16e0ab33f7c6d209a4c0daf448331685befc2c3bace&")
             .setFooter({
-                text: "SCPD Ticket System"
+                text: "✦ SCPD Ticket System ✦"
             });
 
         const menu = new StringSelectMenuBuilder()
             .setCustomId("major_robberies")
-            .setPlaceholder("🏦 Select a robbery...")
+            .setPlaceholder("🏛️ Select a robbery...")
             .addOptions(
                 {
-                    label: "Yacht",
+                    label: "🛥️ Yacht",
                     description: "Request approval for Yacht Robbery",
-                    emoji: "🛥️",
                     value: "yacht"
                 },
                 {
-                    label: "Central Bank",
+                    label: "🏦 Central Bank",
                     description: "Request approval for Central Bank",
-                    emoji: "🏦",
                     value: "centralbank"
                 },
                 {
-                    label: "Museum",
-                    description: "Request approval for Museum",
-                    emoji: "🏛️",
-                    value: "museum"
+                    label: "🏢 Maze Bank",
+                    description: "Request approval for Maze Bank",
+                    value: "mazebank"
                 },
                 {
-                    label: "Maze Bank",
-                    description: "Request approval for Maze Bank",
-                    emoji: "🏢",
-                    value: "mazebank"
+                    label: "🏛️ Museum",
+                    description: "Request approval for Museum",
+                    value: "museum"
                 }
             );
 
-        const row = new ActionRowBuilder().addComponents(menu);
+        const menuRow = new ActionRowBuilder().addComponents(menu);
+
+        const buttonRow = new ActionRowBuilder().addComponents(
+
+            new ButtonBuilder()
+                .setCustomId("help")
+                .setLabel("Help / Support")
+                .setEmoji("🛟")
+                .setStyle(ButtonStyle.Primary),
+
+            new ButtonBuilder()
+                .setCustomId("rules")
+                .setLabel("Rules")
+                .setEmoji("📖")
+                .setStyle(ButtonStyle.Secondary)
+
+        );
 
         await interaction.channel.send({
             embeds: [embed],
-            components: [row]
+            components: [menuRow, buttonRow]
         });
 
         await interaction.reply({
-            content: "✅ Panel created successfully.",
+            content: "✅ Major Robberies panel created successfully.",
             ephemeral: true
         });
 

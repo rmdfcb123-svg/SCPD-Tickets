@@ -6,32 +6,8 @@ const {
     ButtonStyle,
     EmbedBuilder
 } = require("discord.js");
-const robberyInfo = {
-    yacht: {
-        title: "🛥️ Yacht Robbery",
-        color: "#3498db",
-        image: "https://cdn.discordapp.com/attachments/1521162083968749710/1521162816025919538/Screenshot_2026-06-29_153600.png?ex=6a43d4c5&is=6a428345&hm=3836619a7e99fde896fca61fef445d366c3cba6f35461071c6cfaf8e8df81c60&"
-    },
 
-    centralbank: {
-        title: "🏦 Central Bank Robbery",
-        color: "#f1c40f",
-        image: "https://cdn.discordapp.com/attachments/1521162083968749710/1521163172256419850/image.png?ex=6a43d51a&is=6a42839a&hm=249791c3c741ac38fb01433a39717c8c73ec72b2c92d834e01b2efbf9a59e2e1&"
-    },
-
-    museum: {
-        title: "🏛️ Museum Robbery",
-        color: "#9b59b6",
-        image: "https://cdn.discordapp.com/attachments/1521162083968749710/1521163242276126851/image.png?ex=6a43d52a&is=6a4283aa&hm=db1a8121ba86269758f49a22faa5360895b316870199d1ff95f837b6fe3884fa&"
-    },
-
-    mazebank: {
-        title: "💰 Maze Bank Robbery",
-        color: "#2ecc71",
-        image: "https://cdn.discordapp.com/attachments/1521162083968749710/1521163369606807592/image.png?ex=6a43d549&is=6a4283c9&hm=9f67ee382933426e4e618fa7b54e225c30aa9c352671d1f8767777af14268c7b&"
-    }
-};
-
+const robberyInfo = require("./robberyData");
 const config = require("../config/config");
 
 module.exports = async (interaction, robbery) => {
@@ -59,16 +35,9 @@ module.exports = async (interaction, robbery) => {
         });
     }
 
-    // أسماء التذاكر
-    const names = {
-        yacht: "yacht",
-        centralbank: "centralbank",
-        museum: "museum",
-        mazebank: "mazebank"
-    };
 
     const ticket = await interaction.guild.channels.create({
-        name: `${names[robbery]}-${interaction.user.username}`.toLowerCase(),
+        name: `${info.channel}-${interaction.user.username}`.toLowerCase(),
 
         type: ChannelType.GuildText,
 
